@@ -1,0 +1,67 @@
+version: "3.7"
+
+services:
+
+  samba:
+    image: dperson/samba
+    restart: always
+    command: '-u "$SAMBA_USER;$SAMBA_PASSWORD" -s "media;/media;yes;no" -s "downloads;/downloads;yes;no"'
+    stdin_open: true
+    tty: true
+    ports:
+      - 139:139
+      - 445:445
+    volumes:
+      - /usr/share/zoneinfo/America/Argentina/Buenos_Aires:/etc/localtime
+      - /home/$USER/storage/media:/media
+      - /home/$USER/storage/downloads:/downloads
+
+  plex:
+    image: linuxserver/plex
+    container_name: plex
+    network_mode: host
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - VERSION=docker
+      - UMASK_SET=022 #optional
+      - PLEX_CLAIM=$PLEX_CLAIM
+    volumes:
+      - /home/$USER/storage/config/PlexMediaServer/config:/config
+      - /home/$USER/storage/media/video:/movies
+    restart: always
+
+  transmission:
+    image: linuxserver/transmission
+    container_name: transmission
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Argentina/Buenos_Aires
+    volumes:
+      - /home/$USER/storage/downloads/p2p/torrents/config:/config
+      - /home/$USER/storage/downloads/p2p/torrents/incoming:/downloads
+      - /home/$USER/storage/downloads/p2p/torrents/watch:/watch
+    ports:
+      - 9091:9091
+      - 51413:51413
+      - 51413:51413/udp
+    restart: unless-stopped
+
+  amule:
+    image: tchabaud/amule
+    container_name: amule
+    environment:
+      - PUID=2000
+      - PGID=2000
+      - WEBUI_PWD=amule
+      - WEBUI_TEMPLATE=AmuleWebUI-Reloaded
+    volumes:
+      - /home/$USER/storage/downloads/p2p/amule/conf:/home/amule/.aMule
+      - /home/$USER/storage/downloads/p2p/amule/temp:/temp
+      - /home/$USER/storage/downloads/p2p/amule/incoming:/incoming
+    ports:
+      - 4711:4711
+      - 4662:4662
+      - 4672:4672/udp
+    restart: always
