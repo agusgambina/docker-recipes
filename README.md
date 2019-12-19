@@ -29,3 +29,40 @@ export SAMBA_PASSWORD="SAMBA_PASSWORD"
 ```
 $ docker-compose up -d
 ```
+
+### External Hard Drive
+
+#### Permanently mount external hard-drive
+
+0. Install requirements
+
+```
+$ sudo apt-get update -y
+$ sudo apt-get install -y fuse
+$ sudo apt-get install -y exfat-fuse
+$ sudo apt-get install -y exfat-utils
+```
+
+1. Make a folder, called, for example /media/driveone
+
+```
+$ sudo mkdir /media/driveone
+```
+
+2. Make yourself the owner of this folder:
+
+```
+$ sudo chown -R $(id -u):$(id -u) /media/driveone
+```
+
+3. Get UUID from hard drive
+
+```
+$ sudo blkid
+```
+
+4. Add a line to your `/etc/fstab` like the following:
+
+```
+UUID=5DFA-D489 /media/driveone exfat defaults,nofail 0       1
+```
