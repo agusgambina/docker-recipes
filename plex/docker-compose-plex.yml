@@ -1,0 +1,19 @@
+version: "3.7"
+
+services:
+
+  plex:
+    image: linuxserver/plex
+    container_name: plex
+    network_mode: host
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - VERSION=docker
+      - UMASK_SET=022 #optional
+      - PLEX_CLAIM=$PLEX_CLAIM
+    volumes:
+      - /home/$USER/storage/config/PlexMediaServer/config:/config
+      - /home/$USER/storage/media/video:/movies
+      - /media/driveone/storage/media:/media
+    restart: always
