@@ -5,10 +5,7 @@ services:
   samba:
     image: dperson/samba
     restart: always
-    command: >
-     -s 'media;/media;ys;yes;yes;all;none;;comment1'
-     -s 'downloads;/downloads;yes;yes;yes;all;none;;comment2'
-     -s 'driveone;/driveone;yes;yes;yes;all;none;;comment3'
+    command: '-u "$SAMBA_USER;$SAMBA_PASSWORD" -s "media;/media;yes;no" -s "downloads;/downloads;yes;no" -s "driveone;/driveone;yes;no"'
     stdin_open: true
     tty: true
     ports:
