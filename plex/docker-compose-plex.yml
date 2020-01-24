@@ -2,6 +2,10 @@ version: "3.7"
 
 services:
 
+  # ENV VARIABLES
+  # PLEX_CONFIG="/home/$USER/storage/config/PlexMediaServer/config"
+  # PLEX_VIDEO="/home/$USER/storage/media/video"
+  # PLEX_MEDIA="/media/driveone/storage/media"
   plex:
     image: linuxserver/plex
     container_name: plex
