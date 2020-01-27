@@ -1,0 +1,17 @@
+version: "3.7"
+
+services:
+
+  samba:
+    image: dperson/samba
+    restart: always
+    command: '-u "$SAMBA_USER;$SAMBA_PASSWORD" -s "media;/media;yes;no" -s "downloads;/downloads;yes;no" -s "driveone;/driveone;yes;no"'
+    stdin_open: true
+    tty: true
+    ports:
+      - 139:139
+      - 445:445
+    volumes:
+      - /usr/share/zoneinfo/America/Argentina/Buenos_Aires:/etc/localtime
+      - $SAMBA_MEDIA:/media
+      - $SAMBA_DOWNLOADS:/downloads
