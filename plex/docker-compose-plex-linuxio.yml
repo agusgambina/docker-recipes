@@ -7,14 +7,17 @@ services:
   # PLEX_VIDEO="/home/$USER/storage/media/video"
   # PLEX_MEDIA="/media/driveone/storage/media"
   plex:
-    image: plexinc/pms-docker
+    image: linuxserver/plex
     container_name: plex
     network_mode: host
     environment:
-      - TZ="<timezone>"
+      - PUID=1000
+      - PGID=1000
+      - VERSION=docker
+      - UMASK_SET=022 #optional
       - PLEX_CLAIM=$PLEX_CLAIM
     volumes:
       - $PLEX_CONFIG:/config
-      - $PLEX_TRANSCODE:/transcode
+      - $PLEX_VIDEO:/movies
       - $PLEX_MEDIA:/media
     restart: always

@@ -44,3 +44,22 @@ services:
       - 4662:4662
       - 4672:4672/udp
     restart: always
+
+  flexget:
+    image: wiserain/flexget
+    container_name: flexget
+    environment:
+      - FG_WEBUI_PASSWD=SuperStrong321
+      - FG_LOG_LEVEL=info
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Argentina/Buenos_Aires
+      - TORRENT_PLUGIN=transmission
+    volumes:
+      - $FLEXGET_CONFIG:/config
+      - $STORAGE:/data
+    ports:
+      - 3539:3539
+    restart: unless-stopped
+    links:
+      - transmission
