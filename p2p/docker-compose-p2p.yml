@@ -12,6 +12,8 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
+      - USER=$TRANSMISION_USER
+      - PASS=$TRANSMISION_USER
       - TZ=America/Argentina/Buenos_Aires
     volumes:
       - $TRANSMISION_CONFIG:/config
@@ -49,7 +51,7 @@ services:
     image: wiserain/flexget
     container_name: flexget
     environment:
-      - FG_WEBUI_PASSWD=SuperStrong321
+      - FG_WEBUI_PASSWD=$FLEXGET_PASS
       - FG_LOG_LEVEL=info
       - PUID=1000
       - PGID=1000
