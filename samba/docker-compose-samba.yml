@@ -6,7 +6,7 @@ services:
     image: dperson/samba
     container_name: samba
     restart: always
-    command: '-u "$SAMBA_USER;$SAMBA_PASSWORD" -s "media;/media;yes;no;no;agusgambina;agusgambina;agusgambina;agusgambina" -s "downloads;/downloads;yes;no;no;agusgambina;agusgambina;agusgambina"'
+    command: '-u "$SAMBA_USER;$SAMBA_PASSWORD" -s "media;/media;yes;no;no;agusgambina;agusgambina;agusgambina;agusgambina"'
     stdin_open: true
     tty: true
     ports:
