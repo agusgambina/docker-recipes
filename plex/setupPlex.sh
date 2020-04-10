@@ -1,4 +1,4 @@
 #!/bin/bash
-mkdir -p /home/$USER/storage/config/PlexMediaServer/config
-mkdir -p /home/$USER/storage/media/transcode
-mkdir -p /home/$USER/storage/media
+mkdir -p $DEFAULTDRIVE/storage/config/PlexMediaServer/config
+mkdir -p $DEFAULTDRIVE/storage/media/transcode
+mkdir -p $DEFAULTDRIVE/storage/media

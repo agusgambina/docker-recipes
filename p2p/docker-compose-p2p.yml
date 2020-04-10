@@ -2,10 +2,6 @@ version: "3.7"
 
 services:
 
-  # ENV VARIABLES
-  # TRANSMISION_CONFIG="/home/$USER/storage/downloads/p2p/torrents/config"
-  # TRANSMISION_INCOMING="/home/$USER/storage/downloads/p2p/torrents/incoming"
-  # TRANSMISION_WATCH="/home/$USER/storage/downloads/p2p/torrents/watch"
   transmission:
     image: linuxserver/transmission
     container_name: transmission
@@ -26,10 +22,6 @@ services:
       - 51413:51413/udp
     restart: unless-stopped
 
-  # ENV VARIABLES
-  # AMULE_CONFIG="/home/$USER/storage/downloads/p2p/amule/conf"
-  # AMULE_TEMP="/home/$USER/storage/downloads/p2p/amule/temp"
-  # AMULE_INCOMING="/home/$USER/storage/downloads/p2p/amule/incoming"
   amule:
     image: tchabaud/amule
     container_name: amule
