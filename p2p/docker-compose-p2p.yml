@@ -12,8 +12,9 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
+      - TRANSMISSION_WEB_HOME=/combustion-release/
       - USER=$TRANSMISION_USER
-      - PASS=$TRANSMISION_USER
+      - PASS=$TRANSMISION_PASS
       - TZ=America/Argentina/Buenos_Aires
     volumes:
       - $TRANSMISION_CONFIG:/config
@@ -57,6 +58,7 @@ services:
       - PGID=1000
       - TZ=America/Argentina/Buenos_Aires
       - TORRENT_PLUGIN=transmission
+      - FG_PLUGINS="Subliminal"
     volumes:
       - $FLEXGET_CONFIG:/config
       - $STORAGE:/data
