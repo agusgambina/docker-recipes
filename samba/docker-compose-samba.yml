@@ -15,4 +15,3 @@ services:
     volumes:
       - /usr/share/zoneinfo/America/Argentina/Buenos_Aires:/etc/localtime
       - $SAMBA_MEDIA:/media
-      - $SAMBA_DOWNLOADS:/downloads
