@@ -1,0 +1,178 @@
+web_server:
+  bind: 0.0.0.0
+  port: 3539
+
+
+schedules:
+  - tasks: '*'
+    interval:
+      minutes: 30
+
+templates:
+  tv:
+    regexp:
+      reject:
+        - x265: {from: title}
+    series:
+      settings:
+        tv:
+          exact: yes
+          propers: 12 hours
+          quality: 720p
+      tv:
+      - Westworld
+
+    transmission:
+      host: transmission
+      port: 9091
+      username: batalino
+      password: NewStrongPassword123
+
+tasks:
+  eztvrss:
+    rss: https://eztv.ag/ezrss.xml
+    template: tv
+    priority: 2
+  sort_tv:
+    priority: 2
+    no_entries_ok: yes
+    parsing:
+      series: guessit
+    filesystem:
+      path: /data/driveone/storage/downloads/p2p/torrents/incoming/complete
+      regexp: '.*\.(avi|mkv|mp4)$'
+      recursive: yes
+    accept_all: yes
+    thetvdb_lookup: yes
+    require_field: series_name
+    all_series:
+      parse_only: yes
+    exec:
+      auto_escape: yes
+      on_output:
+        for_entries: |
+          if mediainfo "{{ location }}" | grep EAC3; then
+            mkdir -p "/data/drivetwo/storage/media/video/tvshows/{{ tvdb_series_name }}/Season {{ series_season }}" && ffmpeg -hwaccel auto -y -i "{{ location }}" -map 0 -c:s copy -c:v copy -c:a ac3 -b:a 640k "/data/drivetwo/storage/media/video/tvshows/{{ tvdb_series_name }}/Season {{ series_season }}/{{ tvdb_series_name }} - {{ series_id }}{{ location | pathext }}"
+          else
+            mkdir -p "/data/drivetwo/storage/media/video/tvshows/{{ tvdb_series_name }}/Season {{ series_season }}" && cp "{{ location }}" "/data/drivetwo/storage//media/video/tvshows/{{ tvdb_series_name }}/Season {{ series_season }}/{{ tvdb_series_name }} - {{ series_id }}{{ location | pathext }}"
+          fi
+
+  argenteamrss:
+    rss: http://www.argenteam.net/feed/58ff9c9136a55f9279a87411e01ede84
+    template: tv
+    priority: 2
+  sort_tv:
+    priority: 2
+    no_entries_ok: yes
+    parsing:
+      series: guessit
+    filesystem:
+      path: /data/driveone/storage/downloads/p2p/torrents/incoming/complete
+      regexp: '.*\.(avi|mkv|mp4)$'
+      recursive: yes
+    accept_all: yes
+    thetvdb_lookup: yes
+    require_field: series_name
+    all_series:
+      parse_only: yes
+    exec:
+      auto_escape: yes
+      on_output:
+        for_entries: |
+          if mediainfo "{{ location }}" | grep EAC3; then
+            mkdir -p "/data/drivetwo/storage/media/video/tvshows/{{ tvdb_series_name }}/Season {{ series_season }}" && ffmpeg -hwaccel auto -y -i "{{ location }}" -map 0 -c:s copy -c:v copy -c:a ac3 -b:a 640k "/data/drivetwo/storage/media/video/tvshows/{{ tvdb_series_name }}/Season {{ series_season }}/{{ tvdb_series_name }} - {{ series_id }}{{ location | pathext }}"
+          else
+            mkdir -p "/data/drivetwo/storage/media/video/tvshows/{{ tvdb_series_name }}/Season {{ series_season }}" && cp "{{ location }}" "/data/drivetwo/storage/media/video/tvshows/{{ tvdb_series_name }}/Season {{ series_season }}/{{ tvdb_series_name }} - {{ series_id }}{{ location | pathext }}"
+          fi
+
+
+  sort_movies:
+    priority: 2
+    no_entries_ok: yes
+    filesystem:
+      path: /data/driveone/storage/downloads/p2p/torrents/incoming/complete
+      regexp: '.*\.(avi|mkv|mp4)$'
+      recursive: yes
+    accept_all: yes
+    require_field: movie_name
+    imdb_lookup: yes
+    exec:
+      auto_escape: yes
+      on_output:
+        for_entries: |
+          if mediainfo "{{ location }}" | grep EAC3; then
+            mkdir -p "/data/drivetwo/storage/media/video/movies/{{ movie_name }} ({{ movie_year }})" && ffmpeg -hwaccel auto -y -i "{{ location }}" -map 0 -c:s copy -c:v copy -c:a ac3 -b:a 640k "/data/drivetwo/storage/media/video/movies/{{ movie_name }} ({{ movie_year }})/{{ movie_name }} ({{ movie_year }}){{ location | pathext }}"
+          else
+            mkdir -p "/data/drivetwo/storage/media/video/movies/{{ movie_name }} ({{ movie_year }})" && cp "{{ location }}" "/data/drivetwo/storage/media/video/movies/{{ movie_name }} ({{ movie_year }})/{{ movie_name }} ({{ movie_year }}){{ location | pathext }}"
+          fi
+
+  remove_stale_torrents:
+    from_transmission:
+      host: transmission
+      port: 9091
+      username: batalino
+      password: NewStrongPassword123
+    disable: [seen, seen_info_hash]
+    if:
+      - transmission_progress == 100: accept
+      - not transmission_seed_ratio_ok: reject
+      - not transmission_idle_limit_ok: reject
+    transmission:
+      host: transmission
+      port: 9091
+      username: batalino
+      password: "NewStrongPassword123"
+      action: purge
+
+  get-subtitles:
+    priority: 6
+    disable: [retry_failed]
+    filesystem:
+      path:
+        - /data/driveone/storage/media/video
+        - /data/drivetwo/storage/media/video
+      regexp: '.*\.(avi|mkv|mp4)$'
+      recursive: yes
+    accept_all: yes
+    subliminal:
+      exact_match: no
+      languages:
+        - es
+      alternatives:
+        - en
+      providers: [opensubtitles, addic7ed]
+      single: no
+      hearing_impaired: yes
+      authentication:               #consider using the variables plugin
+        addic7ed:
+          username: $USER_SUBS
+          password: $PASS_SUBS
+        opensubtitles:
+          username: $USER_SUBS
+          password: $PASS_SUBS
+
+  # get-subtitles:
+  #   filesystem:
+  #     path: 
+  #       - /data/driveone/storage/downloads/p2p/torrents/incoming/complete
+  #     regexp: '.*\.(avi|mkv|mp4)$'  # only include filenames with these extensions
+  #     recursive: yes
+  #   accept_all: yes
+  #   seen: local                     # seen shouldn't interfer with anything outside this subtitles task
+  #   subliminal:
+  #     languages:
+  #       - es
+  #     alternatives:
+  #       - eng
+  #     exact_match: yes
+  #     #only use the following providers
+  #     providers: [addic7ed, opensubtitles]
+  #     single: no
+  #     hearing_impaired: yes
+  #     authentication:               #consider using the variables plugin
+  #       addic7ed:
+  #         username: $USER_SUBS
+  #         password: $PASS_SUBS
+  #       opensubtitles:
+  #         username: $USER_SUBS
+  #         password: $PASS_SUBS
