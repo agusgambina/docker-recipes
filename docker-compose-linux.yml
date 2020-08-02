@@ -2,21 +2,6 @@ version: "3.7"
 
 services:
 
-  samba:
-    image: dperson/samba
-    restart: always
-    command: '-u "$SAMBA_USER;$SAMBA_PASSWORD" -s "media;/media;yes;no" -s "downloads;/downloads;yes;no" -s "driveone;/driveone;yes;no"'
-    stdin_open: true
-    tty: true
-    ports:
-      - 139:139
-      - 445:445
-    volumes:
-      - /usr/share/zoneinfo/America/Argentina/Buenos_Aires:/etc/localtime
-      - /home/$USER/storage/media:/media
-      - /home/$USER/storage/downloads:/downloads
-      - /media/driveone:/driveone
-
   plex:
     image: linuxserver/plex
     container_name: plex
@@ -49,21 +34,3 @@ services:
       - 51413:51413
       - 51413:51413/udp
     restart: unless-stopped
-
-  amule:
-    image: tchabaud/amule
-    container_name: amule
-    environment:
-      - PUID=2000
-      - PGID=2000
-      - WEBUI_PWD=amule
-      - WEBUI_TEMPLATE=AmuleWebUI-Reloaded
-    volumes:
-      - /home/$USER/storage/downloads/p2p/amule/conf:/home/amule/.aMule
-      - /home/$USER/storage/downloads/p2p/amule/temp:/temp
-      - /home/$USER/storage/downloads/p2p/amule/incoming:/incoming
-    ports:
-      - 4711:4711
-      - 4662:4662
-      - 4672:4672/udp
-    restart: always
